@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: taskflow-postgres
+    environment:
+      POSTGRES_DB: taskflow
+      POSTGRES_USER: taskflow_user
+      POSTGRES_PASSWORD: taskflow_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow_user -d taskflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - taskflow-network
+
+  # .NET Backend API
+  backend:
+    build:
+      context: ./backend/TaskFlow.API
+      dockerfile: Dockerfile
+    container_name: taskflow-backend
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=taskflow;Username=taskflow_user;Password=taskflow_pass
+      - ASPNETCORE_URLS=http://+:5000
+      - ASPNETCORE_ENVIRONMENT=Production
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - taskflow-network
+    restart: unless-stopped
+
+  # React Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskflow-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - taskflow-network
+    restart: unless-stopped
+
+networks:
+  taskflow-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
