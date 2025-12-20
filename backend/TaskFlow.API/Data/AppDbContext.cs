@@ -60,7 +60,7 @@ public class AppDbContext : DbContext
                     Description = "Aprender useState e useEffect",
                     Column = "todo",
                     Priority = "high",
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new TaskItem
                 {
@@ -69,7 +69,7 @@ public class AppDbContext : DbContext
                     Description = "Instalar e configurar Tailwind CSS",
                     Column = "doing",
                     Priority = "medium",
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new TaskItem
                 {
@@ -78,7 +78,7 @@ public class AppDbContext : DbContext
                     Description = "Desenvolver componentes reutilizáveis",
                     Column = "todo",
                     Priority = "high",
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
             );
         });
